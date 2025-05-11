@@ -15,6 +15,25 @@ services:
     networks:
       - shop_network
 
+  # PostgreSQL for User Service
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - shop_network
+
   # Product Service
   product-service:
     build:
@@ -44,8 +63,32 @@ services:
       - shop_network
     restart: unless-stopped
 
+  # User Service
+  user-service:
+    build:
+      context: ./services/user
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"  # HTTP API
+      - "9091:9091"  # gRPC
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=users
+      - HTTP_PORT=8081
+      - GRPC_PORT=9091
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - shop_network
+    restart: unless-stopped
+
 volumes:
   mongodb_data:
+  postgres_data:
 
 networks:
   shop_network:

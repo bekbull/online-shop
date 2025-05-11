@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/bekbull/online-shop/services/user/api/proto";
+
+service UserService {
+  // CreateUser creates a new user
+  rpc CreateUser(CreateUserRequest) returns (UserResponse) {}
+  
+  // GetUser retrieves a user by ID
+  rpc GetUser(GetUserRequest) returns (UserResponse) {}
+  
+  // UpdateUser updates an existing user
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse) {}
+  
+  // DeleteUser deletes a user by ID
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+  
+  // ListUsers retrieves a list of users with optional filtering
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+  
+  // GetUserByEmail retrieves a user by email (used for authentication)
+  rpc GetUserByEmail(GetUserByEmailRequest) returns (UserResponse) {}
+}
+
+// User represents the user entity
+message User {
+  string id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string password_hash = 5; // Stored hashed, never returned in responses
+  repeated string roles = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+// CreateUserRequest contains the data needed to create a user
+message CreateUserRequest {
+  string email = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string password = 4; // Plain text password, will be hashed server-side
+  repeated string roles = 5;
+}
+
+// GetUserRequest contains the ID to retrieve a user
+message GetUserRequest {
+  string id = 1;
+}
+
+// UpdateUserRequest contains the data needed to update a user
+message UpdateUserRequest {
+  string id = 1;
+  optional string email = 2;
+  optional string first_name = 3;
+  optional string last_name = 4;
+  optional string password = 5; // Plain text password, will be hashed server-side
+  repeated string roles = 6;
+}
+
+// DeleteUserRequest contains the ID to delete a user
+message DeleteUserRequest {
+  string id = 1;
+}
+
+// DeleteUserResponse indicates success of delete operation
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+// ListUsersRequest contains optional filtering parameters
+message ListUsersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  string email_filter = 3; // Optional filter by email pattern
+}
+
+// ListUsersResponse contains a list of users
+message ListUsersResponse {
+  repeated UserResponse users = 1;
+  int32 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+// GetUserByEmailRequest contains the email to lookup a user
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+// UserResponse represents the user data returned to clients
+message UserResponse {
+  string id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  repeated string roles = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  // Note: password_hash is deliberately excluded
+} 
