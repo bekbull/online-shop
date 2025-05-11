@@ -1,0 +1,95 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Cursor Coding Rules for Go Microservices Online Shop
+Rule 1: Coding Standards
+When generating or reviewing Go code, adhere to the following standards:
+
+Use camelCase for variable and function names.
+Use PascalCase for type names.
+Ensure functions are concise and perform a single task.
+Choose meaningful and descriptive names for all identifiers.
+Structure code into packages based on their functionality.
+
+Rule 2: Microservice Architecture
+Follow these guidelines for microservice architecture:
+
+Design each microservice to handle one specific business capability.
+Use gRPC for communication between services, with service contracts defined in Protocol Buffers.
+Expose RESTful HTTP endpoints for external clients to interact with the services.
+Maintain loose coupling between services and high cohesion within each service.
+
+Rule 3: API Design
+When designing APIs:
+
+For RESTful APIs:
+Adhere to RESTful principles: use HTTP methods correctly (GET for retrieval, POST for creation, etc.), and use nouns to represent resources.
+Serialize data in JSON format for requests and responses.
+Handle errors by returning appropriate HTTP status codes and error messages.
+
+
+For gRPC services:
+Define service methods that are clear and focused.
+Use Protocol Buffers to specify request and response messages with suitable data types.
+Manage errors using gRPC's built-in status codes and messages.
+
+
+
+Rule 4: Database Interaction
+When interacting with databases:
+
+Implement connection pooling to manage database connections efficiently.
+Handle database errors appropriately, logging them and returning meaningful error messages to the client if necessary.
+For SQL databases, use prepared statements to avoid SQL injection vulnerabilities.
+If using an ORM, adhere to its best practices and ensure it is configured correctly.
+
+Rule 5: Concurrency
+Leverage Go's concurrency features as follows:
+
+Use goroutines to perform tasks concurrently when appropriate.
+Communicate between goroutines using channels to pass data and signals.
+Avoid shared mutable state; instead, use message passing via channels.
+Ensure that goroutines are properly managed to prevent leaks, such as by using context cancellation or wait groups.
+
+Rule 6: Testing
+Ensure robust testing by:
+
+Writing unit tests for all critical functions and methods using the testing package.
+Creating integration tests to verify interactions between services.
+Striving for high test coverage, especially for core business logic.
+Utilizing assertion libraries such as testify/assert to make tests more readable and maintainable.
+Incorporating benchmark tests for performance-critical code paths.
+
+Rule 7: Logging
+Implement logging practices as follows:
+
+Use structured logging libraries like slog or zerolog to produce logs in a machine-readable format.
+Log significant events, including errors, warnings, and informational messages.
+Include relevant context in log entries, such as request IDs, user IDs, or service names, to aid in tracing and debugging.
+Adjust log levels based on the environment: more verbose in development, less in production.
+
+Rule 8: Configuration Management
+Manage configurations by:
+
+Storing configuration settings in environment variables, following the 12-factor app principles.
+Refraining from hardcoding configuration values directly in the source code.
+Utilizing a configuration management library such as viper for handling complex or file-based configurations.
+Securing sensitive information, like database credentials or API keys, by using secure storage mechanisms or secret management tools.
+
+Rule 9: Documentation
+Maintain comprehensive documentation by:
+
+Keeping README files in each microservice repository updated with setup instructions, usage examples, and architecture overviews.
+Writing documentation in Markdown format for consistency and readability.
+Generating and maintaining Swagger/OpenAPI documentation for all RESTful APIs to provide interactive and standardized API references.
+Adding concise and helpful comments in the code where necessary to explain complex logic or decisions.
+
+Rule 10: DevOps Practices
+Adhere to DevOps best practices by:
+
+Containerizing each microservice with Docker to ensure consistency across environments.
+Utilizing Docker Compose for local development to manage multi-service applications easily.
+Optimizing Dockerfiles to minimize build times and image sizes, for example, by using multi-stage builds.
+Following Docker best practices, such as specifying exact versions for base images and avoiding unnecessary layers.

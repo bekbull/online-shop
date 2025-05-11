@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # MongoDB for Product Service
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root_password
+      MONGO_INITDB_DATABASE: product_db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - shop_network
+
+  # Product Service
+  product-service:
+    build:
+      context: .
+      dockerfile: services/product-service/Dockerfile
+    ports:
+      - "8080:8080"  # HTTP API
+      - "50051:50051"  # gRPC
+    environment:
+      - ENV=development
+      - MONGODB_URI=mongodb://root:root_password@mongodb:27017
+      - MONGODB_DATABASE=product_db
+      - MONGODB_COLLECTION=products
+      - MONGODB_USERNAME=root
+      - MONGODB_PASSWORD=root_password
+      - LOG_LEVEL=info
+      - LOG_JSON=false
+      - LOG_PRETTY=true
+      - GRPC_PORT=50051
+      - HTTP_PORT=8080
+      - METRICS_ENABLED=true
+      - METRICS_PATH=/metrics
+      - TRACING_ENABLED=false
+    depends_on:
+      - mongodb
+    networks:
+      - shop_network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+networks:
+  shop_network:
+    driver: bridge 
